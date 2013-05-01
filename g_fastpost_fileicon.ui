@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Joly. Connect your web and your computer in the one place.
+ Copyright (C) 2012-2013 Ivan Akulov <gxoptg@gmail.com>
+
+ This file is the part of Joly.
+
+ Joly is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Joly is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Joly. If not, see <http://www.gnu.org/licenses/>.
+-->
+<ui version="4.0">
+ <class>FileIcon</class>
+ <widget class="QFrame" name="FileIcon">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>118</width>
+    <height>106</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true"/>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">border: 0px solid #333;</string>
+  </property>
+  <property name="frameShape">
+   <enum>QFrame::Box</enum>
+  </property>
+  <property name="frameShadow">
+   <enum>QFrame::Plain</enum>
+  </property>
+  <property name="lineWidth">
+   <number>0</number>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

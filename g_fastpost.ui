@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Joly. Connect your web and your computer in the one place.
+ Copyright (C) 2012-2013 Ivan Akulov <gxoptg@gmail.com>
+
+ This file is the part of Joly.
+
+ Joly is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Joly is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Joly. If not, see <http://www.gnu.org/licenses/>.
+-->
+<ui version="4.0">
+ <class>G_FastPost</class>
+ <widget class="QWidget" name="G_FastPost">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>393</width>
+    <height>491</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">FastPost Gadget</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWidget" name="topLevelWidget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="useVkSN">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="useTwiSN">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="_TextEdit" name="textEdit">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>345</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="DropField" name="dropField">
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="statusLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>125</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="clearButton">
+          <property name="text">
+           <string comment="Текст на кнопке в FastPostGadget">Оч&amp;истить</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="sendButton">
+          <property name="text">
+           <string>&amp;Отправить</string>
+          </property>
+          <property name="mainButton" stdset="0">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="AttachedFilesField" name="attachedFilesField" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>_TextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>_textedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DropField</class>
+   <extends>QFrame</extends>
+   <header>g_fastpost_dropfield.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AttachedFilesField</class>
+   <extends>QWidget</extends>
+   <header>g_fastpost_attachedfilesfield.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>clearButton</tabstop>
+  <tabstop>sendButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

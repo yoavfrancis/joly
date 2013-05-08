@@ -27,6 +27,9 @@
 #include "apitwiauth.h"
 #include <QNetworkReply>
 
+/**
+ * @brief The ApiTwi class is the interface for the Twitter API.
+ */
 class ApiTwi : public QObject
 {
     Q_OBJECT

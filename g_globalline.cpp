@@ -36,6 +36,7 @@
 #endif
 
 /* Functions for script engline */
+
 QScriptValue mySqrt(QScriptContext *context, QScriptEngine *engine) {
     Q_UNUSED(engine)
     QScriptValue value = context->argument(0);
@@ -333,7 +334,9 @@ void G_GlobalLine::runAction(Action action) {
     case ActionKind::internetSearch:
     {
         QUrl url("https://google.com/search");
-        url.addEncodedQueryItem("q", QUrl::toPercentEncoding(action.text, "", "+"));
+        QUrlQuery query;
+        query.addQueryItem("q", QUrl::toPercentEncoding(action.text, "", "+"));
+        url.setQuery(query);
         OSTools::http(url);
         break;
     }
@@ -556,9 +559,6 @@ void G_GlobalLine::valueChanged(const QString &gadget, const QString &valueName,
     if (gadget != "GlobalLine" && gadget != "all")
         return;
 
-    if (valueName == "saveHistory")
-        m_saveHistory = value.toBool();
-
     else if (valueName == "saveEnteredText")
         m_saveEnteredText = value.toBool();
 }
@@ -580,13 +580,6 @@ void G_GlobalLine::readSettings() {
 
     settings.beginGroup("GlobalLineGadget");
     move(settings.value("position").toPoint());
-
-    // saveHistory
-    if (!settings.contains("saveHistory"))
-        settings.setValue("saveHistory", true);
-    m_saveHistory = settings.value("saveHistory").toBool();
-    if (m_saveHistory)
-        globStr->setHistory(settings.value("history").toStringList());
 
     // saveEnteredText
     if (!settings.contains("saveEnteredText"))
@@ -616,14 +609,7 @@ void G_GlobalLine::writeSettings() {
 
     settings.beginGroup("GlobalLineGadget");
     settings.setValue("position", pos());
-    settings.setValue("saveHistory", m_saveHistory);
     settings.setValue("saveEnteredText", m_saveEnteredText);
-
-
-    if (m_saveHistory)
-        settings.setValue("history", globStr->getHistory());
-    else
-        settings.setValue("history", QStringList());
 
     if (m_saveEnteredText)
         settings.setValue("text", globStr->text());

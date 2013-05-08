@@ -23,6 +23,9 @@
 
 #include <QTextEdit>
 
+/**
+ * @brief The _TextEdit class is a descendant class of QTextEdit with several additional features.
+ */
 class _TextEdit : public QTextEdit
 {
     Q_OBJECT
@@ -34,8 +37,8 @@ signals:
 
 protected:
     void dropEvent(QDropEvent *e) {
-        QTextEdit::dropEvent(e);
         emit droppingFinished();
+        QTextEdit::dropEvent(e);
     }
 };
 

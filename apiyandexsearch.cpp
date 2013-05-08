@@ -22,12 +22,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-
-#ifdef Q_OS_WIN
-#include <QJson/include/QJson/Parser>
-#elif defined (Q_OS_LINUX)
-#include <qjson/parser.h>
-#endif
+#include <QJsonDocument>
+#include <QUrlQuery>
 
 ApiYandexSearch::ApiYandexSearch(QObject *parent) :
     QObject(parent)
@@ -42,33 +38,37 @@ void ApiYandexSearch::getSuggestions(const QString &request)
     connect(manager, SIGNAL(finished(QNetworkReply*)), SLOT(getSuggestionsFinished(QNetworkReply*)));
 
     QUrl url("http://suggest.yandex.ua/suggest-ya.cgi");
-    url.addQueryItem("v", "4");
-    url.addQueryItem("fact", "1");
-    url.addEncodedQueryItem("part", QUrl::toPercentEncoding(request, "", "+"));
+    QUrlQuery query;
+    query.addQueryItem("v", "4");
+    query.addQueryItem("fact", "1");
+    query.addQueryItem("part", QUrl::toPercentEncoding(request, "", "+"));
+    url.setQuery(query);
+
     manager->get(QNetworkRequest(url));
 }
 
 void ApiYandexSearch::getSuggestionsFinished(QNetworkReply *reply)
 {
-    QByteArray replyContent = reply->readAll();
+    QByteArray content = reply->readAll();
 
-    QJson::Parser parser;
-    bool ok;
+    QJsonParseError parseError;
 
-    QVariantList result = parser.parse(replyContent, &ok).toList();
-    if (Q_UNLIKELY(!ok)) {
-        qWarning() << "ApiYandexSearch::getSuggestionsFinished():" << "error parsing JSON data:"
-                   << parser.errorString() << "at" << parser.errorLine();
-        qWarning() << "Request:" << m_lastSuggestionsRequest << "\nReturned JSON:" << replyContent;
+    QVariant json = QJsonDocument::fromJson(content, &parseError).toVariant();
+    if (Q_UNLIKELY(parseError.error)) {
+        qWarning() << "ApiYandexSearch::getSuggestionsFinished():"
+                   << tr("Can't parse JSON data:") << content
+                   << tr(". Parser returned an error:") << parseError.errorString();
+        qWarning() << "Request:" << m_lastSuggestionsRequest;
         m_lastSuggestionsRequest.clear();
         return;
     }
+    QVariantList jsonList = json.toList();
 
-    if (result.size() == 0) {
+    if (jsonList.size() == 0) {
             return;
     }
 
-    QVariantList suggestions = result.at(1).toList();
+    QVariantList suggestions = jsonList.at(1).toList();
 
     QList<Consts::Shared::Suggestion> suggestionsToReturn;
     forc11 (QVariant var, suggestions) {

@@ -146,21 +146,8 @@ void SettingsWidget::updateUsedSocialNetworksList_FastPost() {
         m_usedSocialNetworks_FastPost << Consts::SocNetworks::Twitter::name;
 }
 
-
-void SettingsWidget::on_saveHistoryCheckBox_stateChanged(int /*arg1*/) {
-    emit valueChanged(Consts::Gadgets::GlobalLine::name, "saveHistory", saveHistoryCheckBox->isChecked());
-        // because arg1 == 0 when checkBox is unchecked, and 2, when it's checked
-}
-
 void SettingsWidget::on_saveEnteredTextInGlobalLineCheckBox_stateChanged(int /*arg1*/) {
     emit valueChanged(Consts::Gadgets::GlobalLine::name, "saveEnteredText", saveEnteredTextInGlobalLineCheckBox->isChecked());
-        // because arg1 == 0 when checkBox is unchecked, and 2, when it's checked
-}
-
-
-void SettingsWidget::on_secondsSpinBox_valueChanged(int arg1) {
-    emit valueChanged(Consts::Gadgets::Messages::name, "updateInterval", arg1*1000);
-        // because 1000 milliseconds in 1 second
 }
 
 void SettingsWidget::on_checkBoxVK_Messages_stateChanged(int /*arg1*/) {

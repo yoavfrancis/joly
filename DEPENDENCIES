@@ -1,0 +1,7 @@
+libsqlite3-dev
+libxslt1-dev
+libxml2-dev
+libglib2.0-dev
+libgstreamer-plugins-base0.10-dev
+
+Plus dependencies of those libs

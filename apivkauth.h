@@ -78,9 +78,6 @@ private:
     static qint32 m_expiresIn;
 
     QPointer<QWebView> m_loginPage;
-    static QList<QNetworkCookie> m_cookies;
-    QPointer<QNetworkCookieJar> m_cookieJar;
-
     QPointer<QTimer> m_authorisationTimer;
 
     static bool m_authorised;

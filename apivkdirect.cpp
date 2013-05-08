@@ -24,12 +24,6 @@
 #include <QDebug>
 #include <QtNetwork>
 
-#ifdef Q_OS_WIN
-#include <QJson/include/QJson/Parser>
-#elif defined(Q_OS_LINUX)
-#include <qjson/parser.h>
-#endif
-
 ApiVKDirect::ApiVKDirect(QString access_token, QObject *parent) :
     QObject(parent), m_accessToken(access_token)
 { }
@@ -37,19 +31,22 @@ ApiVKDirect::ApiVKDirect(QString access_token, QObject *parent) :
 void ApiVKDirect::messages_get(int filters, int out, int offset, int count, int preview_length, int time_offset) {
         // метод для прямой работы с методом API Вконтакте messages.get
     QUrl url("https://api.vk.com/method/messages.get");
+    QUrlQuery query;
     if (out != -1)
-        url.addQueryItem("out", QString::number(out));
+        query.addQueryItem("out", QString::number(out));
     if (offset != -1)
-        url.addQueryItem("offset", QString::number(offset));
+        query.addQueryItem("offset", QString::number(offset));
     if (count != -1)
-        url.addQueryItem("count", QString::number(count));
+        query.addQueryItem("count", QString::number(count));
     if (filters != -1)
-        url.addQueryItem("filters", QString::number(filters));
+        query.addQueryItem("filters", QString::number(filters));
     if (preview_length != -1)
-        url.addQueryItem("preview_length", QString::number(preview_length));
+        query.addQueryItem("preview_length", QString::number(preview_length));
     if (time_offset != -1)
-        url.addQueryItem("time_offset", QString::number(time_offset));
-    url.addQueryItem("access_token", m_accessToken);
+        query.addQueryItem("time_offset", QString::number(time_offset));
+    query.addQueryItem("access_token", m_accessToken);
+
+    url.setQuery(query);
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     manager->get(QNetworkRequest(url));
@@ -59,21 +56,24 @@ void ApiVKDirect::messages_get(int filters, int out, int offset, int count, int 
 void ApiVKDirect::wall_post(QString message, QString attachments, int friends_only, int owner_id, QString services, int from_group, int n_signed) {
         // метод для прямой работы с методом API Вконтакте wall.post
     QUrl url("https://api.vk.com/method/wall.post");
+    QUrlQuery query;
     if (owner_id != -1)
-        url.addQueryItem("owner_id", QString::number(owner_id));
+        query.addQueryItem("owner_id", QString::number(owner_id));
     if (message != "")
-        url.addQueryItem("message", message);
+        query.addQueryItem("message", message);
     if (attachments != "")
-        url.addQueryItem("count", attachments);
+        query.addQueryItem("count", attachments);
     if (services != "")
-        url.addQueryItem("services", services);
+        query.addQueryItem("services", services);
     if (from_group != -1)
-        url.addQueryItem("from_group", QString::number(from_group));
+        query.addQueryItem("from_group", QString::number(from_group));
     if (n_signed != -1)
-        url.addQueryItem("signed", QString::number(n_signed));
+        query.addQueryItem("signed", QString::number(n_signed));
     if (friends_only != -1)
-        url.addQueryItem("friends_only", QString::number(friends_only));
-    url.addQueryItem("access_token", m_accessToken);
+        query.addQueryItem("friends_only", QString::number(friends_only));
+    query.addQueryItem("access_token", m_accessToken);
+
+    url.setQuery(query);
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     manager->get(QNetworkRequest(url));
@@ -82,7 +82,9 @@ void ApiVKDirect::wall_post(QString message, QString attachments, int friends_on
 
 void ApiVKDirect::photos_getWallUploadServer() {
     QUrl url("https://api.vk.com/method/photos.getWallUploadServer");
-    url.addQueryItem("access_token", m_accessToken);
+    QUrlQuery query;
+    query.addQueryItem("access_token", m_accessToken);
+    url.setQuery(query);
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     manager->get(QNetworkRequest(url));
@@ -97,10 +99,12 @@ void ApiVKDirect::photos_postPhotoToServer(const QNetworkRequest &request, const
 
 void ApiVKDirect::photos_saveWallPhoto(const QString &server, const QString &photo, const QString &hash) {
     QUrl url("https://api.vk.com/method/photos.saveWallPhoto");
-    url.addQueryItem("server", server);
-    url.addQueryItem("photo", photo);
-    url.addQueryItem("hash", hash);
-    url.addQueryItem("access_token", m_accessToken);
+    QUrlQuery query;
+    query.addQueryItem("server", server);
+    query.addQueryItem("photo", photo);
+    query.addQueryItem("hash", hash);
+    query.addQueryItem("access_token", m_accessToken);
+    url.setQuery(query);
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     manager->get(QNetworkRequest(url));
@@ -109,11 +113,13 @@ void ApiVKDirect::photos_saveWallPhoto(const QString &server, const QString &pho
 
 void ApiVKDirect::askLongPollServer(QString serverAddress, QString key, QString ts, int wait, int mode) {
     QUrl url(QString("http://%1").arg(serverAddress));
-    url.addQueryItem("act", "a_check");
-    url.addQueryItem("key", key);
-    url.addQueryItem("ts", ts);
-    url.addQueryItem("wait", QString::number(wait));
-    url.addQueryItem("mode", QString::number(mode));
+    QUrlQuery query;
+    query.addQueryItem("act", "a_check");
+    query.addQueryItem("key", key);
+    query.addQueryItem("ts", ts);
+    query.addQueryItem("wait", QString::number(wait));
+    query.addQueryItem("mode", QString::number(mode));
+    url.setQuery(query);
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     manager->get(QNetworkRequest(url));

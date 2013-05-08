@@ -161,27 +161,11 @@ namespace OSTools
         return QProcessEnvironment::systemEnvironment().value(name);
     }
 
-
-    void searchInInternet (const QString &what);
-
     void readMappedFile (const QString &name, QMap<QString, QString> *result);
 
     void readListFile (const QString &name, QStringList *result);
 
     void readListFile (const QString &name, QSet<QString> *result);
-
-
-/*    inline QString correctPath (const QString &path) {
-            // функция в Windows заменяет символы '\' на '/' для корректного открытия файлов по пути
-            // возвращает модифицированную строку
-#ifdef Q_OS_WIN
-        QString tmp = path;
-        return tmp.replace('\\', '/');
-#else
-        return path;
-#endif
-    }
-*/
 
     inline bool isCorrectPath (const QString &path) {
             // функция возвращает, является ли введенная строка путем

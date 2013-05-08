@@ -1,27 +1,5 @@
-<!--
- Joly. Connect your web and your computer in the one place.
- Copyright (C) 2012-2013 Ivan Akulov <gxoptg@gmail.com>
-
- This file is the part of Joly.
-
- Joly is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- Joly is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with Joly. If not, see <http://www.gnu.org/licenses/>.
--->
-
 <RCC>
     <qresource prefix="/">
-        <file>resources/domains.txt</file>
-        <file>resources/fastRun.ini</file>
         <file>images/outline_star.png</file>
         <file>images/star.png</file>
         <file>images/watch.png</file>
@@ -29,7 +7,6 @@
         <file>images/globe.png</file>
         <file>images/down_arrow.png</file>
         <file>images/up_arrow.png</file>
-        <file>resources/vk.auth</file>
         <file>images/twitter.png</file>
         <file>images/email.png</file>
         <file>images/window.png</file>
@@ -41,19 +18,9 @@
         <file>images/restore_item_transparent.svg</file>
         <file>images/remove_item_transparent.png</file>
         <file>images/restore_item_transparent.png</file>
-        <file>fonts/DroidSans.ttf</file>
-        <file>fonts/DroidSansArmenian.ttf</file>
-        <file>fonts/DroidSans-Bold.ttf</file>
-        <file>fonts/DroidSansEthiopic-Bold.ttf</file>
-        <file>fonts/DroidSansEthiopic-Regular.ttf</file>
-        <file>fonts/DroidSansGeorgian.ttf</file>
-        <file>fonts/DroidSansHebrew-Bold.ttf</file>
-        <file>fonts/DroidSansHebrew-Regular.ttf</file>
-        <file>fonts/DroidSansJapanese.ttf</file>
-        <file>fonts/DroidSansMono.ttf</file>
-        <file>fonts/DroidSansThai.ttf</file>
         <file>images/logo_small.png</file>
         <file>images/equal.png</file>
         <file>images/question.svg</file>
+        <file>resources/domains.txt</file>
     </qresource>
 </RCC>

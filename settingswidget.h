@@ -44,9 +44,7 @@ protected:
     void updateUsedSocialNetworksList_FastPost();
 
 private slots:
-    void on_saveHistoryCheckBox_stateChanged(int /*arg1*/);
     void on_saveEnteredTextInGlobalLineCheckBox_stateChanged(int /*arg1*/);
-    void on_secondsSpinBox_valueChanged(int arg1);
 
     void on_checkBoxVK_Messages_stateChanged(int /*arg1*/);
     void on_checkBoxGPlus_Messages_stateChanged(int /*arg1*/);

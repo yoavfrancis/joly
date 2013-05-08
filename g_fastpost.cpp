@@ -487,15 +487,15 @@ void G_FastPost::dropEvent(QDropEvent *event) {
 // if state == true, it shows dropField and hides everything else
 // otherwise it makes on the contrary
 void G_FastPost::setShownDropField(bool shown) {
-    textEdit->setShown(!shown);
-    attachedFilesField->setShown(!shown && !attachedFilesField->isEmpty());
-    sendButton->setShown(!shown);
+    textEdit->setVisible(!shown);
+    attachedFilesField->setVisible(!shown && !attachedFilesField->isEmpty());
+    sendButton->setVisible(!shown);
 
-    dropField->setShown(shown); // in center - to prevent blinking in Windows
+    dropField->setVisible(shown); // in center - to prevent blinking in Windows
 
-    clearButton->setShown(!shown);
-    statusLabel->setShown(!shown);
-    useVkSN->setShown(!shown);
+    clearButton->setVisible(!shown);
+    statusLabel->setVisible(!shown);
+    useVkSN->setVisible(!shown);
 }
 
 void G_FastPost::on_useTwiSN_clicked() {

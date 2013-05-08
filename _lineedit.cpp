@@ -21,15 +21,14 @@
 #include <QtWidgets>
 #include "_lineedit.h"
 
-_LineEdit::_LineEdit(QWidget* parent) : QLineEdit (parent)
+_LineEdit::_LineEdit(QWidget* parent)
+    : QLineEdit (parent)
 {
-    history = new QStringList;
-    currIndex = history->size();
+    currIndex = history.size();
 }
 
-void _LineEdit::keyPressEvent(QKeyEvent* event) {
-        // обеспечивает перехват событий нажатия клавиш Ctrl+Вверх и Ctrl+Вниз
-        // для поддержки работы с историей ввода
+void _LineEdit::keyPressEvent(QKeyEvent* event)
+{
     switch (event->key()) {
 
     case Qt::Key_Up:

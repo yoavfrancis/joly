@@ -22,12 +22,7 @@
 #include <QDebug>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-
-#ifdef Q_OS_WIN
-#include <QJson/include/QJson/Parser>
-#elif defined(Q_OS_LINUX)
-#include <qjson/parser.h>
-#endif
+#include <QJsonDocument>
 
 #include <QtTweetLib/qtweetstatusupdate.h>
 
@@ -92,12 +87,21 @@ void ApiTwi::saveConfiguration(QNetworkReply *reply) {
      * Otherwise m_oAuthTwitter.networkAccessManager does.
      */
 #if 1
-    qDebug() << reply->url();
     if (reply->url().toString().endsWith("configuration.json")) {
 #endif
-    QJson::Parser parser;
-    m_configuration = parser.parse(reply->readAll()).toMap();
+
+    QByteArray content = reply->readAll();
+
+    QJsonParseError parseError;
+    QVariant json = QJsonDocument::fromJson(content, &parseError).toVariant();
+    if (Q_UNLIKELY(parseError.error)) {
+        qWarning() << tr("Can't parse JSON data:") << content
+                   << tr(". Parser returned an error:") << parseError.errorString();
+    }
+
+    m_configuration = json.toMap();
     emit configurationIsReady(m_configuration);
+
 #if 1
     }
     else {

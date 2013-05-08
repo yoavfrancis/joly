@@ -22,17 +22,6 @@
 #include <iostream>
 
 namespace OSTools {
-
-    void searchInInternet(const QString &what) {
-        QUrl tmp("http://google.com/search");
-//        QUrl query(what);
-//        QByteArray str = query.toEncoded();
-//        str.replace("+","%252B");
-//        str.replace(' ', '+');
-        tmp.addQueryItem("q", what);
-        QDesktopServices::openUrl(tmp);
-    }
-
     void readMappedFile (const QString &name, QMap<QString, QString> *result) {
             // функция читает файл со строками вида СЛОВО СЛОВО
             // и возвращает его в параметре result как QMap<QString, QString>*

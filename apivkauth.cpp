@@ -26,6 +26,7 @@
 #include <QNetworkCookieJar>
 #include <QNetworkRequest>
 #include <QWebFrame>
+#include <QJsonDocument>
 #include "ostools.h"
 #include "consts.h"
 
@@ -38,14 +39,6 @@ QString ApiVKAuth::m_accessToken = QString();
 int ApiVKAuth::m_expiresIn = 0;
 QString ApiVKAuth::m_lastError = "";
 QString ApiVKAuth::m_lastErrorDescription = "";
-QList<QNetworkCookie> ApiVKAuth::m_cookies = QList<QNetworkCookie>();
-
-#ifdef Q_OS_WIN
-#include <QJson/include/QJson/Parser>
-#elif defined(Q_OS_LINUX)
-#include <qjson/parser.h>
-#endif
-
 
     // defining class methods
 
@@ -76,19 +69,21 @@ void ApiVKAuth::newAuthoriseRequest() {
         m_loginPage->setWindowTitle(tr("Вход во ВКонтакте", "Window title of login page for VK Api. In English ВКонтакте must be VK."));
 
         QUrl url("https://oauth.vk.com/authorize");
-        url.addQueryItem("client_id", m_appId);
-        url.addQueryItem("scope", m_permissions.toString());
-        url.addQueryItem("redirect_uri","https://oauth.vk.com/blank.html");
-        url.addQueryItem("display","page");
-        url.addQueryItem("response_type","token");
+        QUrlQuery query;
+        query.addQueryItem("client_id", m_appId);
+        query.addQueryItem("scope", m_permissions.toString());
+        query.addQueryItem("redirect_uri","https://oauth.vk.com/blank.html");
+        query.addQueryItem("display","page");
+        query.addQueryItem("response_type","token");
+        url.setQuery(query);
 
         m_loginPage->load(QNetworkRequest(url));
         connect(m_loginPage, SIGNAL(urlChanged(QUrl)), this, SLOT(processUrl(QUrl)));
     }
 }
 
-void ApiVKAuth::processUrl(QUrl url) {
-    qDebug() << "ApiVkAuth: url changed:" << url.toString();
+void ApiVKAuth::processUrl(QUrl url)
+{
     if (url.host() == "oauth.vk.com" && ( url.path().startsWith("/oauth/authorize") || url.path().startsWith("/authorize") || url.path().startsWith("/error"))) {
         // Showing auth window
         m_loginPage->show();
@@ -103,42 +98,40 @@ void ApiVKAuth::processUrl(QUrl url) {
         url = temp;
     }
 
-    if (url.hasQueryItem("err") || url.hasQueryItem("error")) {
+    if (QUrlQuery(url).hasQueryItem("err") || QUrlQuery(url).hasQueryItem("error")) {
+        QByteArray content = m_loginPage->page()->mainFrame()->toPlainText().toLocal8Bit();
 
-        QJson::Parser parser;
-        bool ok;
+        QJsonParseError parseError;
 
-        QVariantMap errorData = parser.parse(m_loginPage->page()->mainFrame()->toPlainText().toAscii(), &ok).toMap();
-        m_lastError = errorData.value("error").toString();
-        m_lastErrorDescription = errorData.value("error_description").toString();
+        QVariant json = QJsonDocument::fromJson(content, &parseError).toVariant();
+        if (Q_UNLIKELY(parseError.error)) {
+            qWarning() << tr("Can't parse JSON data:") << content
+                       << tr(". Parser returned an error:") << parseError.errorString();
+        }
+
+        QVariantMap jsonMap = json.toMap();
+        m_lastError = jsonMap.value("error").toString();
+        m_lastErrorDescription = jsonMap.value("error_description").toString();
 
         finishAuthorisation(false);
 
         return;
     }
 
-    // actually, I don't know when it happens and whether it happens at all.
-    // I wrote this code a long time ago...
-    // If it's unnecessary, remove it.
-//    if (!url.hasQueryItem("access_token")) {
-//        m_inAuthorisationProcess = false;
-//        finishAuthorisation(false);
-//        qDebug() << "ApiVkAuth:" << "happened";
-//        return;
-//    }
-    if (Q_UNLIKELY(!url.hasQueryItem("access_token"))) {
+    if (Q_UNLIKELY(!QUrlQuery(url).hasQueryItem("access_token"))) {
         qWarning() << "ApiVKAuth:" << "returned url have not query item 'access_token'."
                    << "Social functions for VK may not work.";
     }
-    Q_ASSERT(url.hasQueryItem("access_token"));
+    Q_ASSERT(QUrlQuery(url).hasQueryItem("access_token"));
 
-    m_accessToken = url.queryItemValue("access_token");
-    m_expiresIn = url.queryItemValue("expires_in").toInt();
+    m_accessToken = QUrlQuery(url).queryItemValue("access_token");
+    m_expiresIn = QUrlQuery(url).queryItemValue("expires_in").toInt();
 
     finishAuthorisation(true);
 }
 
-void ApiVKAuth::waitForEndOfAuth() {
+void ApiVKAuth::waitForEndOfAuth()
+{
         // вызывается таймером из newAuthoriseRequest(), если в другом экземпляре класса в этот момент происходит авторизация
         // после окончания авторизации генерирует событие успешности или ошибки
     if (m_inAuthorisationProcess)

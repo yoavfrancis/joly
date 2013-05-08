@@ -32,8 +32,9 @@
 #define nullptr 0
 #endif
 
-const QString ApiTwiAuth::m_consumerKey = "uSH5FekxEhWTdl84WwpUTw";
-const QString ApiTwiAuth::m_consumerSecret = "wKSynlJaNUawWDYDaqpy7efLxWe4Wr00iKUA1hu4SrI";
+// TODO: remove is unnecessary
+//const QString ApiTwiAuth::m_consumerKey = "uSH5FekxEhWTdl84WwpUTw";
+//const QString ApiTwiAuth::m_consumerSecret = "wKSynlJaNUawWDYDaqpy7efLxWe4Wr00iKUA1hu4SrI";
 
 bool ApiTwiAuth::m_needsUserAccountData = true;
 bool ApiTwiAuth::m_authorised = false;
@@ -56,14 +57,14 @@ void ApiTwiAuth::authorise() {
 void ApiTwiAuth::startAuthorisation() {
     m_inAuthorisationProcess = true;
     m_oAuthTwitter->setNetworkAccessManager(new QNetworkAccessManager(this));
-    m_oAuthTwitter->setConsumerKey(m_consumerKey.toAscii());
-    m_oAuthTwitter->setConsumerSecret(m_consumerSecret.toAscii());
+//    m_oAuthTwitter->setConsumerKey(m_consumerKey.toLatin1());
+//    m_oAuthTwitter->setConsumerSecret(m_consumerSecret.toLatin1());
 
     if (m_oAuthToken.isEmpty()) {
         newAuthoriseRequest();
     } else {
-        m_oAuthTwitter->setOAuthToken(m_oAuthToken.toAscii());
-        m_oAuthTwitter->setOAuthTokenSecret(m_oAuthTokenSecret.toAscii());
+        m_oAuthTwitter->setOAuthToken(m_oAuthToken.toLatin1());
+        m_oAuthTwitter->setOAuthTokenSecret(m_oAuthTokenSecret.toLatin1());
         completeAuth();
     }
 }

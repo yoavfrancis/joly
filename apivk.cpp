@@ -36,26 +36,11 @@
 #include <QVariant>
 #include <QDateTime>
 #include <QDebug>
+#include <QJsonDocument>
 #include "ostools.h"
 #include "consts.h"
 #include "apivkdirect.h"
 #include "apivkauth.h"
-
-#ifdef Q_OS_WIN
-#include <QJson/include/QJson/Parser>
-#elif defined(Q_OS_LINUX)
-#include <qjson/parser.h>
-#endif
-
-#ifdef WIN_OLD_COMPILER
-#define nullptr 0
-#endif
-
-
-    // defining static class members
-
-
-    // defining class methods
 
 ApiVK::ApiVK(QObject *parent) :
     QObject(parent), m_auth()
@@ -79,7 +64,9 @@ void ApiVK::getUnreadMessagesVariationRequest(int *errorCode) {
         m_directApi.messages_get(1);
 
         QUrl url("https://api.vk.com/method/messages.getLongPollServer");
-        url.addQueryItem("access_token", m_auth.getAccessToken());
+        QUrlQuery query;
+        query.addQueryItem("access_token", m_auth.getAccessToken());
+        url.setQuery(query);
 
         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
         manager->get(QNetworkRequest(url));
@@ -97,27 +84,23 @@ void ApiVK::special_longPollServerDataReturned(QNetworkReply* reply) {
     QByteArray content = reply->readAll();
     reply->deleteLater();
 
-    QJson::Parser parser;
-    bool ok;
+    QJsonParseError parseError;
 
-    QVariantMap lpsData = parser.parse(content, &ok).toMap();
-    Q_ASSERT_X(ok, "LongPollServer data analysing", "parser returned error");
-    if (Q_UNLIKELY(!ok)) {
-        qWarning() << tr("LongPollServer data analysing: parser returned an error.");
+    QVariant json = QJsonDocument::fromJson(content, &parseError).toVariant();
+    if (Q_UNLIKELY(parseError.error)) {
+        qWarning() << tr("Can't parse JSON data:") << content
+                   << tr(". Parser returned an error:") << parseError.errorString();
         return;
     }
+    Q_ASSERT_X(!parseError.error, "LongPollServer data analysing", "parser returned error");
 
-    if (lpsData.contains("response")) {
-        QVariantMap nestedData = lpsData.value("response").toMap();
+    if (json.toMap().contains("response")) {
+        QVariantMap nestedData = json.toMap().value("response").toMap();
         m_lpsData.key = nestedData.value("key").toString();
         m_lpsData.serverAddress = nestedData.value("server").toString().replace(QString("\\/"), QChar('/'));
         m_lpsData.ts = nestedData.value("ts").toString();
         m_lpsData.initialized = true;
-
-            // Why i'm using value() instead of []? Because it's more safe and QtCreator gives hints for results of value() function.
     }
-
-//    getUnreadMessagesRequest();
 }
 
 int ApiVK::getUnreadMessagesVariation(int *errorCode) {
@@ -128,32 +111,37 @@ int ApiVK::getUnreadMessagesVariation(int *errorCode) {
         return -1;
     }
 
+    QJsonParseError parseError;
 
-    QJson::Parser parser;
-    bool ok;
-
-    QVariantMap returnedData = parser.parse(m_returnedData, &ok).toMap();
-    Q_ASSERT_X(ok, "Messages data analysing", "parser returned error");
-    if (Q_UNLIKELY(!ok)) {
-        qWarning() << tr("Messages data analysing: parser returned an error. Couldn't get unread messages count.");
+    QVariant json = QJsonDocument::fromJson(m_returnedData, &parseError).toVariant();
+    if (Q_UNLIKELY(parseError.error)) {
+        qWarning() << tr("Can't parse JSON data:") << m_returnedData
+                   << tr(". Parser returned an error:") << parseError.errorString();
 
         if (errorCode) *errorCode = AnalysisError;
         return -1;
     }
+    Q_ASSERT_X(!parseError.error, "Messages data analysing", "parser returned error");
+
+    QVariantMap jsonMap = json.toMap();
 
     // if it's result of messages.get
-    if (returnedData.contains("response")) {
-        return returnedData.value("response").toList().first().toInt();
+    if (jsonMap.contains("response")) {
+        return jsonMap.value("response").toList().first().toInt();
     }
     else {
-        m_lpsData.ts = returnedData.value("ts").toString();
-        QVariantList updates = returnedData.value("updates").toList();
+        m_lpsData.ts = jsonMap.value("ts").toString();
+        QVariantList updates = jsonMap.value("updates").toList();
 
         int count = 0;
         const short int newMessage = 4;
         const short int messageWasRead = 3;
         const short int messageWasReadMask = 1;
-        for (QVariantList::ConstIterator iter = updates.begin(); iter != updates.end(); ++iter) {
+
+        /* FIXME: the new VK API version returns "message was read" mask not only when app's user
+         * reads the message, but also when his interlocutor does so.
+         */
+        for (auto iter = updates.constBegin(); iter != updates.constEnd(); ++iter) {
             QVariantList nestedList = iter->toList();
 
             int eventCode = nestedList.first().toInt();
@@ -190,11 +178,7 @@ void ApiVK::post(QString message, QStringList attachments, int friendsOnly, int 
 void ApiVK::postWithAttachments() {
     QStringList attachments = m_uploader.getUploadedFilesList();
     QStringList words = m_postData.message.split(' ', QString::SkipEmptyParts);
-#ifdef WIN_OLD_COMPILER
-    foreach (const QString &word, words) {
-#else
-    for (const QString &word : words) {
-#endif
+    forc11 (const QString &word, words) {
         if (word.startsWith("http://") || word.startsWith("https://")) {
             attachments.append(word);
             break;
@@ -211,20 +195,22 @@ int ApiVK::postResult() {
         return DidntAuthorised;
     }
 
-    QJson::Parser parser;
-    bool ok;
+    QJsonParseError parseError;
 
-    QVariantMap returnedData = parser.parse(m_returnedData, &ok).toMap();
-    Q_ASSERT_X(ok, "Post result data analysing", "parser returned error");
-    if (Q_UNLIKELY(!ok)) {
-        qWarning() << tr("Post result data analysing: parser returned an error. Couldn't get post result.");
+    QVariant json = QJsonDocument::fromJson(m_returnedData, &parseError).toVariant();
+    if (Q_UNLIKELY(parseError.error)) {
+        qWarning() << tr("Can't parse JSON data:") << m_returnedData
+                   << tr(". Parser returned an error:") << parseError.errorString();
         return AnalysisError;
     }
+    Q_ASSERT_X(!parseError.error, "Post result data analysing", "parser returned error");
 
-    if (returnedData.contains("response")) {
+    QVariantMap jsonMap = json.toMap();
+
+    if (jsonMap.contains("response")) {
         return NoError;
-    } else if (returnedData.contains("error")) {
-        QVariantMap errorMap = returnedData.value("error").toMap();
+    } else if (jsonMap.contains("error")) {
+        QVariantMap errorMap = jsonMap.value("error").toMap();
 
         m_serverErrorCode = errorMap.value("error").toString().toInt();
         m_serverErrorDescription = errorMap.value("error_msg").toString();

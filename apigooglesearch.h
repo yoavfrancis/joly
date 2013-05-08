@@ -26,6 +26,12 @@
 
 class QNetworkReply;
 
+/**
+ * @brief The ApiGoogleSearch class is the interface for the Google Search APIs.
+ *
+ * Currently (2013-05-08) supported functions:
+ *   - Search suggestions
+ */
 class ApiGoogleSearch : public QObject
 {
     Q_OBJECT
@@ -34,15 +40,24 @@ public:
 
 signals:
     void suggestionsReceived(const QString &request, const QList<Consts::Shared::Suggestion> &suggestions);
+    void suggestionsError();
     
 public slots:
     void getSuggestions(const QString &request);
+
+protected:
+    void parseSuggestionsForChrome(const QByteArray &data);
 
 private slots:
     void getSuggestionsFinished(QNetworkReply *reply);
 
 private:
-    QString m_lastSuggestionsRequest;
+    QString m_currentSuggestionsRequest;
+
+    struct _suggestionsParameters {
+        const QString url = "http://suggestqueries.google.com/complete/search";
+        const QString client = "chrome";
+    } m_suggestionsParameters;
 };
 
 #endif // APIGOOGLESEARCH_H

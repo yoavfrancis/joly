@@ -20,6 +20,7 @@
 
 #include "notifierbox.h"
 #include <QUrl>
+#include <QUrlQuery>
 #include "consts.h"
 
 NotifierBox::NotifierBox(QWidget *parent) :
@@ -58,14 +59,15 @@ void NotifierBox::on_descriptionLabel_linkActivated(const QString &link) {
         else
             return;
 
+        QUrlQuery query(url);
 
-        QString action = url.queryItemValue("act");
+        QString action = query.queryItemValue("act");
 
         QVariantMap parameters;
-        url.removeQueryItem("act");
-        QList<QPair<QString, QString> > list = url.queryItems();
+        query.removeQueryItem("act");
+        QList<QPair<QString, QString> > list = query.queryItems();
         for (int i = 0; i < list.size(); ++i) {
-            parameters[list[i].first] = list[i].second;
+            parameters[list[i].first] = list.at(i).second;
         }
 
         emit linkActivated(gadgetName, action, parameters);

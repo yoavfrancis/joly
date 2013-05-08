@@ -28,34 +28,15 @@ class QWidget;
 class QStringList;
 class QKeyEvent;
 
+/**
+ * @brief The _LineEdit class is a descendant class of QLineEdit with several additional features.
+ */
 class _LineEdit: public QLineEdit
 {
     Q_OBJECT
 
 public:
     _LineEdit(QWidget* parent = 0);
-
-    inline void addCurrentToHistory() {
-            // добавляет текущее значение текста в историю команд
-        *history << text();
-        currIndex++;
-    }
-
-    inline QStringList getHistory() const {
-        return *history;
-    }
-
-    inline void setHistory(QStringList h) {
-        *history = h;
-    }
-
-   inline  qint32 getCurrIndex() const {
-        return currIndex;
-    }
-
-    inline void setCurrIndex(qint32 i) {
-        currIndex = i;
-    }
 
 signals:
     void keyUpPressed();
@@ -66,9 +47,6 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
 private:
-    QStringList *history;   // история команд
-    qint32 currIndex;       // текущий индекс в истории команд
-    bool upWasPressed;      // нажималась ли клавиша Вверх после последнего нажатия клавиши Enter
-    QString lastText;       // последний введенный текст
+
 };
 #endif // GLLINEEDIT_H

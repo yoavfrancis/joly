@@ -40,7 +40,6 @@ SOURCES += main.cpp \
     consts.cpp \
     g_fastpost.cpp \
     g_globalline.cpp \
-    _completer.cpp \
     settingswidget.cpp \
     ostools_executablefilesinterface.cpp \
     apivkpermissions.cpp \
@@ -75,7 +74,6 @@ HEADERS  += \
     board.h \
     g_fastpost.h \
     g_globalline.h \
-    _completer.h \
     settingswidget.h \
     ostools_executablefilesinterface.h \
     apivkpermissions.h \
@@ -102,7 +100,35 @@ HEADERS  += \
 
 OTHER_FILES += \
     LICENSE \
-    AUTHORS
+    AUTHORS \
+    images/window.png \
+    images/watch.png \
+    images/up_arrow.png \
+    images/twitter.png \
+    images/star.png \
+    images/search.png \
+    images/restore_item_transparent.svg \
+    images/restore_item_transparent.png \
+    images/remove_item_transparent.svg \
+    images/remove_item_transparent.png \
+    images/remove_item.png \
+    images/question.svg \
+    images/question.png \
+    images/outline_star.png \
+    images/logo_small.png \
+    images/logo_middle.png \
+    images/logo_light.png \
+    images/logo_dark.png \
+    images/globe.png \
+    images/folder.png \
+    images/file.png \
+    images/equal.png \
+    images/email.png \
+    images/down_arrow.png \
+    images/command.png \
+    resources/domains.txt \
+    DEPENDENCIES \
+    README.md
 
 FORMS += \
     g_fastpost.ui \
@@ -121,12 +147,11 @@ QMAKE_CXXFLAGS += -std=c++0x -U__STRICT_ANSI__
 INCLUDEPATH += "includes"
 
 unix {
-    INCLUDEPATH -= "includes/QJson" "includes/QJson/include"
-    LIBS += -L. "libqtweetlib.so.1" -L/usr/local/lib -lqjson
+    LIBS += -L"../Joly/libs" -lqtweetlib
 }
 
 windows {
-    LIBS +=  "Libs\\qjson\\qjson0.dll" "Libs\\qttweetlib\\qtweetlib.dll"
+    LIBS +=  "Libs\\qttweetlib\\qtweetlib.dll"
     CODECFORTR = UTF-8
     QMAKE_CXXFLAGS += -U__STRICT_ANSI__
     DEFINES += WIN_OLD_COMPILER

@@ -93,11 +93,6 @@ void G_Messages::valueChanged(const QString &gadget, const QString &valueName, c
     if (gadget != "Messages" && gadget != "all")
         return;
 
-    if (valueName == "updateInterval") {
-        m_updateInterval = value.toInt();
-        m_updateTimer[Consts::SocNetworks::VK::name]->start(m_updateInterval);
-    }
-
     else if (valueName == "usedSocialNetworks") {
         m_usedSocialNetworks = value.toStringList();
     }

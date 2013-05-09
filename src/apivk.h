@@ -39,24 +39,16 @@ class QTimer;
 class QNetworkCookie;
 
 
-    /* Основной класс.
-     * Правила использования: для получения какой-то информации вызывайте метод с окончанием Request,
-     * например, getUnreadMessagesVariationRequest(). После выполнения запроса сгенерируется сигнал
-     * requestFinished. Затем можете вызывать метод для возврата значения, например, getUnreadMessagesVariation().
-     * For posting any information call corresponding method, e.g. post(). After request finish
-     * the requestFinished (or requestFailed) signal will be emitted. Then you can call method to know get know the result of
-     * previously called one, e.g. postResult().
-     *
-     * Заметьте, что методы для возврата значения могут вернуть -1, если возникла какая-то ошибка.
-     */
-
+/**
+ * @brief The ApiVK class is the interface for VK API.
+ */
 class ApiVK : public QObject
 {
     Q_OBJECT
 public:
     explicit ApiVK(QObject *parent = 0);
 
-    enum Errors { NoError, DidntAuthorised, PermissionsAreNeeded, NetworkError, AnalysisError, ServerError, UknownError };
+    enum ErrorKind { NoError, DidntAuthorised, PermissionsAreNeeded, NetworkError, AnalysisError, ServerError, UknownError };
 
     inline bool isAuthorised() const {
         return m_auth.isAuthorised();

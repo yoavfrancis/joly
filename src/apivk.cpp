@@ -32,7 +32,6 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QUrl>
-#include <QtXml>
 #include <QVariant>
 #include <QDateTime>
 #include <QDebug>

@@ -17,20 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Joly. If not, see <http://www.gnu.org/licenses/>.
  **************************************/
-
 #include "apitwiauth.h"
 #include <QtCore>
-#include <string>
 #include "apitwiauth_twitterpinwidget.h"
 #include <QNetworkAccessManager>
 
 #include "QtTweetLib/qtweetstatus.h"
 #include "QtTweetLib/qtweetstatusupdate.h"
 #include "QtTweetLib/qtweetaccountverifycredentials.h"
-
-#ifdef WIN_OLD_COMPILER
-#define nullptr 0
-#endif
 
 // TODO: remove is unnecessary
 //const QString ApiTwiAuth::m_consumerKey = "uSH5FekxEhWTdl84WwpUTw";
@@ -49,11 +43,17 @@ ApiTwiAuth::ApiTwiAuth(OAuthTwitter *oAuthTwitter, QObject *parent) :
     readSettings();
 }
 
+/**
+ * @brief Authorises an user.
+ *
+ * The main difference with ApiTwiAuth::newAuthoriseRequest():
+ * ApiTwiAuth::authorise() looks for saved tokens and starts ApiTwiAuth::newAuthoriseRequest() only when there are not available.
+ */
 void ApiTwiAuth::authorise() {
     startAuthorisation();
 }
 
-/////////////////////////Auth process/////////////////////////
+/////////////////////////Start of auth process/////////////////////////
 void ApiTwiAuth::startAuthorisation() {
     m_inAuthorisationProcess = true;
     m_oAuthTwitter->setNetworkAccessManager(new QNetworkAccessManager(this));
@@ -69,11 +69,13 @@ void ApiTwiAuth::startAuthorisation() {
     }
 }
 
-// It makes new authorisation request using pin system
+/**
+ * @brief Does new authorisation request.
+ */
 void ApiTwiAuth::newAuthoriseRequest() {
     m_oAuthTwitter->clearTokens();
-    m_oAuthToken = "";
-    m_oAuthTokenSecret = "";
+    m_oAuthToken.clear();
+    m_oAuthTokenSecret.clear();
     writeSettings();
 
     TwitterPinWidget *pinWidget = new TwitterPinWidget;
@@ -85,11 +87,10 @@ void ApiTwiAuth::newAuthoriseRequest() {
 
 void ApiTwiAuth::openPinLink() {
     connect(m_oAuthTwitter, SIGNAL(authorizePinFinished()), SLOT(completeAuth()));
-    // The strange error is here: pin authorization link often opens without any token passed in the url.
+    // FIXME: The strange error is here: pin authorization link often opens without any token passed in the url.
     m_oAuthTwitter->authorizePin();
 }
 
-// It finishes pin authorisation
 void ApiTwiAuth::continueWithPin(QString pin) {
     m_oAuthTwitter->requestAccessToken(pin);
 
@@ -97,7 +98,9 @@ void ApiTwiAuth::continueWithPin(QString pin) {
     m_oAuthTokenSecret = m_oAuthTwitter->oauthTokenSecret();
 }
 
-// It checks whether auth was succeed and emits correspinding signals
+/**
+ * @brief Checks whether auth was succeed and emits correspinding signal.
+ */
 void ApiTwiAuth::completeAuth() {
     if (m_oAuthToken.isEmpty()) m_oAuthToken = m_oAuthTwitter->oauthToken();
     if (m_oAuthTokenSecret.isEmpty()) m_oAuthTokenSecret = m_oAuthTwitter->oauthTokenSecret();

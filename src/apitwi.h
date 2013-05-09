@@ -26,6 +26,7 @@
 #include <QDebug>
 #include "apitwiauth.h"
 #include <QNetworkReply>
+#include <QtTweetLib/qtweetnetbase.h>
 
 /**
  * @brief The ApiTwi class is the interface for the Twitter API.
@@ -44,34 +45,51 @@ signals:
     void authorisationFailed();
     void authorisationSucceed();
 
-    void requestFailed();
+    void requestFailed(QTweetNetBase::ErrorCode,QString);
     void requestFinished();
 
     void configurationIsReady(QVariantMap config);
 
 public slots:
+    /**
+     * @brief Authorises an user.
+     * For detailed documentation, look at ApiTwiAuth::authorise().
+     */
     inline void authorise() {
         m_auth.authorise();
     }
 
+    /**
+     * @brief Force starts authorisation process.
+     * For detailed documentation, look at ApiTwiAuth::authorise().
+     */
     inline void newAuthoriseRequest() {
         m_auth.newAuthoriseRequest();
     }
 
-    void post(QString message);
+    void post(QString message); ///< Performs status update.
     int  postResult() const;
 
     QVariantMap getConfiguration() const;
 
 private slots:
+    inline void handleRequestFinish(QNetworkReply* reply) {
+        handleRequestFinish(reply->readAll());
+    }
+
     inline void handleRequestFinish(QByteArray data) {
-        m_returnedData = data;
+        m_lastRequestResult.returnedData = data;
+        m_lastRequestResult.thereWasError = false;
+
         emit requestFinished();
     }
 
-    inline void handleRequestFinish(QNetworkReply* reply) {
-        m_returnedData = reply->readAll();
-        emit requestFinished();
+    inline void handleRequestError(QTweetNetBase::ErrorCode errorCode, QString errorString) {
+        m_lastRequestResult.clear();
+        m_lastRequestResult.thereWasError = true;
+        m_lastRequestResult.errorCode = errorCode;
+
+        emit requestFailed(errorCode, errorString);
     }
 
     void getConfigurationRequest();
@@ -79,10 +97,17 @@ private slots:
 
 private:
     static OAuthTwitter m_oAuthTwitter;
-    ApiTwiAuth m_auth;
-    mutable QByteArray m_returnedData;
-
+    mutable ApiTwiAuth m_auth;
     static QVariantMap m_configuration;
+
+    struct _lastRequestResult {
+        QByteArray returnedData;
+        bool thereWasError;
+
+        int errorCode;
+
+        inline void clear() { returnedData.clear(); thereWasError = false; errorCode = 0; }
+    } m_lastRequestResult;
 };
 
 #endif // APITWI_H

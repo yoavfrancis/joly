@@ -39,10 +39,13 @@ ApiTwi::ApiTwi(QObject *parent)
     connect(&m_auth, SIGNAL(authorisationSucceed()), SLOT(getConfigurationRequest()));
 }
 
-// It posts status update to twitter
+/**
+ * @brief Performs status update in Twitter (post on the wall).
+ * @param message New status message.
+ */
 void ApiTwi::post(QString message) {
     if (!isAuthorised()) {
-        emit requestFailed();
+        emit requestFailed(QTweetNetBase::Unauthorized, "");
         return;
     }
 
@@ -56,11 +59,18 @@ void ApiTwi::post(QString message) {
     statusUpdate->post(message);
 }
 
-// It returns result of status update
+/**
+ * @brief Returns result of the previous post() operation.
+ * @return 0, if there're no errors, otherwise error code.
+ */
 int ApiTwi::postResult() const {
-    QString str = QString(m_returnedData);
-    if (str.contains("<error>"))
-        return -1;
+    QString str = QString(m_lastRequestResult.returnedData);
+    if (m_lastRequestResult.thereWasError)
+        return m_lastRequestResult.errorCode;
+
+    else if (str.contains("<error>"))
+        return QTweetNetBase::UnknownError;
+
     else
         return 0;
 }
@@ -81,8 +91,7 @@ void ApiTwi::getConfigurationRequest() {
 }
 
 void ApiTwi::saveConfiguration(QNetworkReply *reply) {
-    /* TODO: fix this.
-     * QTweetStatusUpdate somewhy does not emit finished() signal
+    /* FIXME: QTweetStatusUpdate somewhy does not emit finished() signal
      * in the lib version used for Joly based on Qt 4.8.
      * Otherwise m_oAuthTwitter.networkAccessManager does.
      */
@@ -105,7 +114,7 @@ void ApiTwi::saveConfiguration(QNetworkReply *reply) {
 #if 1
     }
     else {
-        m_returnedData = reply->readAll();
+        m_lastRequestResult.returnedData = reply->readAll();
         emit requestFinished();
     }
 #endif

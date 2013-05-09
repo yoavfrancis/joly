@@ -18,35 +18,44 @@
  * along with Joly. If not, see <http://www.gnu.org/licenses/>.
  **************************************/
 
-#ifndef APITWIAUTH_TWITTERPINWIDGET_H
-#define APITWIAUTH_TWITTERPINWIDGET_H
+#ifndef APIYANDEXSEARCH_H
+#define APIYANDEXSEARCH_H
 
-#include "ui_apitwiauth_twitterpinwidget.h"
+#include <QObject>
+#include "consts.h"
 
-class TwitterPinWidget : public QWidget, private Ui::TwitterPinWidget
+class QNetworkReply;
+
+/**
+ * @brief The ApiYandexSearch class is the interface for the Yandex Search APIs.
+ *
+ * Currently (2013-05-09) supported functions:
+ *   - Search suggestions
+ */
+class ApiYandexSearch : public QObject
 {
     Q_OBJECT
-    
 public:
-    explicit TwitterPinWidget(QWidget *parent = 0);
-//    inline QString getPin() {
-//        return pin;
-//    }
+    explicit ApiYandexSearch(QObject *parent = 0);
 
 signals:
-    void openLinkAsked();
-    void pinEntered(QString pin);
-    void pinCancelled();
+    void suggestionsReceived(const QString &request, const QList<Consts::Shared::Suggestion> &suggestions);
+    void suggestionsError();
+
+public slots:
+    void getSuggestions(const QString &request);
 
 private slots:
-    void on_openLinkButton_clicked();
-    void on_pinLineEdit_textChanged(const QString &arg1);
-
-    void okButtonClicked();
-    void cancelButtonClicked();
+    void getSuggestionsFinished(QNetworkReply *reply);
 
 private:
-    QString pin;
+    QString m_currentSuggestionsRequest;
+    
+    struct _suggestionsParameters {
+        const QString url = "http://suggest.yandex.ua/suggest-ya.cgi";
+        const QString v = "4";
+        const QString fact = "1";
+    } m_suggestionsParameters;
 };
 
-#endif // APITWIAUTH_TWITTERPINWIDGET_H
+#endif // APIYANDEXSEARCH_H

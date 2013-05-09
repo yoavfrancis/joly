@@ -25,6 +25,9 @@
 #include <QtTweetLib/oauthtwitter.h>
 #include <QPointer>
 
+/**
+ * @brief The ApiTwiAuth class is authorisation interface for Twitter API.
+ */
 class ApiTwiAuth : public QObject
 {
     Q_OBJECT
@@ -41,7 +44,7 @@ public:
     }
     
 signals:
-    void authorisationFailed(/*QString error, QString errorDescription*/);
+    void authorisationFailed();
     void authorisationCancelled();
     void authorisationSucceed();
     
@@ -59,7 +62,10 @@ protected slots:
     void continueWithPin(QString pin);
     void completeAuth();
 
-    // Sets auth status ans emits suitable signal
+    /**
+     * @brief Sets auth status and emits according signal.
+     * @param status New auth status.
+     */
     inline void setIsAuthorised(bool status) {
         m_authorised = status;
         if (status)
@@ -69,8 +75,8 @@ protected slots:
     }
 
 private:
-    static const QString m_consumerKey;
-    static const QString m_consumerSecret;
+//    static const QString m_consumerKey;
+//    static const QString m_consumerSecret;
     static QString m_oAuthToken;
     static QString m_oAuthTokenSecret;
 

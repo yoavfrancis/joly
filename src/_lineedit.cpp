@@ -18,32 +18,29 @@
  * along with Joly. If not, see <http://www.gnu.org/licenses/>.
  **************************************/
 
-#ifndef APIYANDEXSEARCH_H
-#define APIYANDEXSEARCH_H
+#include <QtWidgets>
+#include "_lineedit.h"
 
-#include <QObject>
-#include "consts.h"
+_LineEdit::_LineEdit(QWidget* parent)
+    : QLineEdit (parent)
+{ }
 
-class QNetworkReply;
-
-class ApiYandexSearch : public QObject
+void _LineEdit::keyPressEvent(QKeyEvent* event)
 {
-    Q_OBJECT
-public:
-    explicit ApiYandexSearch(QObject *parent = 0);
+    switch (event->key()) {
 
-signals:
-    void suggestionsReceived(const QString &request, const QList<Consts::Shared::Suggestion> &suggestions);
+    case Qt::Key_Up:
+        emit keyUpPressed();
+        break;
 
-public slots:
-    void getSuggestions(const QString &request);
+    case Qt::Key_Down:
+        emit keyDownPressed();
+        break;
 
-private slots:
-    void getSuggestionsFinished(QNetworkReply *reply);
+    case Qt::Key_Escape:
+        emit escapePressed();
 
-private:
-    QString m_lastSuggestionsRequest;
-    
-};
-
-#endif // APIYANDEXSEARCH_H
+    default:
+        QLineEdit::keyPressEvent(event);
+    }
+}

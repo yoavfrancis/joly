@@ -18,31 +18,38 @@
  * along with Joly. If not, see <http://www.gnu.org/licenses/>.
  **************************************/
 
-#include <QtWidgets>
-#include "_lineedit.h"
+#ifndef APITWIAUTH_TWITTERPINWIDGET_H
+#define APITWIAUTH_TWITTERPINWIDGET_H
 
-_LineEdit::_LineEdit(QWidget* parent)
-    : QLineEdit (parent)
+#include "ui_apitwiauth_twitterpinwidget.h"
+
+/**
+ * @brief The TwitterPinWidget class is dialog of entering Twitter authrisation PIN.
+ */
+class TwitterPinWidget : public QWidget, private Ui::TwitterPinWidget
 {
-    currIndex = history.size();
-}
+    Q_OBJECT
+    
+public:
+    explicit TwitterPinWidget(QWidget *parent = 0);
+//    inline QString getPin() {
+//        return pin;
+//    }
 
-void _LineEdit::keyPressEvent(QKeyEvent* event)
-{
-    switch (event->key()) {
+signals:
+    void openLinkAsked();
+    void pinEntered(QString pin);
+    void pinCancelled();
 
-    case Qt::Key_Up:
-        emit keyUpPressed();
-        break;
+private slots:
+    void on_openLinkButton_clicked();
+    void on_pinLineEdit_textChanged(const QString &arg1);
 
-    case Qt::Key_Down:
-        emit keyDownPressed();
-        break;
+    void okButtonClicked();
+    void cancelButtonClicked();
 
-    case Qt::Key_Escape:
-        emit escapePressed();
+private:
+    QString pin;
+};
 
-    default:
-        QLineEdit::keyPressEvent(event);
-    }
-}
+#endif // APITWIAUTH_TWITTERPINWIDGET_H

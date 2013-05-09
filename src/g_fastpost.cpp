@@ -301,7 +301,7 @@ void G_FastPost::init_Twi() {
     connect(m_apitwi, SIGNAL(authorisationSucceed()), this, SLOT(authSucceed_Twi()));
     connect(m_apitwi, SIGNAL(authorisationFailed()), this, SLOT(authFailed_Twi()));
     connect(m_apitwi, SIGNAL(requestFinished()), this, SLOT(updateState_Twi()));
-    connect(m_apitwi, SIGNAL(requestFailed()), this, SLOT(postFailed_Twi()));
+    connect(m_apitwi, SIGNAL(requestFailed(QTweetNetBase::ErrorCode,QString)), this, SLOT(postFailed_Twi()));
 
     connect(m_apitwi, SIGNAL(configurationIsReady(QVariantMap)), SLOT(saveConfiguration_Twi(QVariantMap)));
 

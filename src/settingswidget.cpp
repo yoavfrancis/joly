@@ -54,7 +54,6 @@ void SettingsWidget::setUpMainSettingsPage() {
 void SettingsWidget::setUpGlobalLineSettingsPage() {
     QSettings settings;
     settings.beginGroup("GlobalLineGadget");
-    saveHistoryCheckBox->setChecked(settings.value("saveHistory").toBool());
     saveEnteredTextInGlobalLineCheckBox->setChecked(settings.value("saveEnteredText").toBool());
     settings.endGroup();
 }
@@ -62,8 +61,6 @@ void SettingsWidget::setUpGlobalLineSettingsPage() {
 void SettingsWidget::setUpMessagesSettingsPage() {
     QSettings settings;
     settings.beginGroup("MessagesGadget");
-    secondsSpinBox->setValue(int(settings.value("updateInterval").toInt()/1000));
-
     checkBoxVK_Messages->setText(Consts::SocNetworks::VK::name);
     checkBoxGPlus_Messages->setText(Consts::SocNetworks::GPlus::name);
     checkBoxGMail_Messages->setText(Consts::SocNetworks::GMail::name);

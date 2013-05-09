@@ -38,6 +38,11 @@ public:
     OAuth(QObject *parent = 0);
     OAuth(const QByteArray& consumerKey, const QByteArray& consumerSecret, QObject *parent = 0);
 
+    /* Fixes for Windows users. Made by gxoptg (https://github.com/gxoptg) */
+    #undef GET
+    #undef POST
+    #undef PUT
+    #undef DELETE
     enum HttpMethod {GET, POST, PUT, DELETE};
 
     void parseTokens(const QByteArray& response);
